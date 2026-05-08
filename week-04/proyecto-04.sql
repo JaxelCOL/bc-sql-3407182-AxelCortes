@@ -1,3 +1,8 @@
+
+-- SEMANA 04
+-- CONSULTAS BÁSICAS CON SELECT
+-- Cooperativa de Taxis
+
 -- TABLA DRIVERS
 
 CREATE TABLE IF NOT EXISTS drivers (
@@ -36,19 +41,7 @@ CREATE TABLE IF NOT EXISTS trips (
     REFERENCES vehicles(id_vehicle)
 );
 
--- TABLA EARNINGS
-
-CREATE TABLE IF NOT EXISTS earnings (
-    id_earning      INTEGER PRIMARY KEY,
-    total_earning   REAL    NOT NULL,
-    earning_date    DATE    NOT NULL,
-    driver_id       INTEGER,
-
-    FOREIGN KEY (driver_id)
-    REFERENCES drivers(id_driver)
-);
-
--- INSERT DRIVERS (15 FILAS)
+-- INSERTS DRIVERS
 
 INSERT INTO drivers (
     id_driver,
@@ -62,19 +55,9 @@ VALUES
 (2, 'Andres Ruiz', '3002222222', 'LIC1002', 'andres@gmail.com'),
 (3, 'Luis Martinez', '3003333333', 'LIC1003', 'luis@gmail.com'),
 (4, 'Jorge Torres', '3004444444', 'LIC1004', 'jorge@gmail.com'),
-(5, 'Miguel Castro', '3005555555', 'LIC1005', 'miguel@gmail.com'),
-(6, 'Daniel Rojas', '3006666666', 'LIC1006', 'daniel@gmail.com'),
-(7, 'Felipe Mora', '3007777777', 'LIC1007', 'felipe@gmail.com'),
-(8, 'Juan Perez', '3008888888', 'LIC1008', 'juan@gmail.com'),
-(9, 'Santiago Diaz', '3009999999', 'LIC1009', 'santiago@gmail.com'),
-(10, 'Kevin Ramirez', '3011111111', 'LIC1010', 'kevin@gmail.com'),
-(11, 'Camilo Suarez', '3012222222', 'LIC1011', 'camilo@gmail.com'),
-(12, 'David Lopez', '3013333333', 'LIC1012', 'david@gmail.com'),
-(13, 'Oscar Medina', '3014444444', 'LIC1013', 'oscar@gmail.com'),
-(14, 'Mateo Silva', '3015555555', 'LIC1014', 'mateo@gmail.com'),
-(15, 'Cristian Vega', '3016666666', 'LIC1015', 'cristian@gmail.com');
+(5, 'Miguel Castro', '3005555555', 'LIC1005', 'miguel@gmail.com');
 
--- INSERT VEHICLES
+-- INSERTS VEHICLES
 
 INSERT INTO vehicles (
     id_vehicle,
@@ -90,7 +73,7 @@ VALUES
 (4, 'JKL321', 'Mazda 2', 'Azul', 4),
 (5, 'MNO654', 'Renault Logan', 'Gris', 5);
 
--- INSERT TRIPS
+-- INSERTS TRIPS
 
 INSERT INTO trips (
     id_trip,
@@ -107,78 +90,89 @@ VALUES
 (4, 'Usme', 'Terminal', 30000, 'completed', 4),
 (5, 'Engativa', 'Zona Rosa', 22000, 'cancelled', 5);
 
--- INSERT EARNINGS
+-- SELECT BÁSICO
 
-INSERT INTO earnings (
-    id_earning,
-    total_earning,
-    earning_date,
-    driver_id
-)
-VALUES
-(1, 120000, '2026-05-01', 1),
-(2, 98000, '2026-05-02', 2),
-(3, 150000, '2026-05-03', 3),
-(4, 110000, '2026-05-04', 4),
-(5, 135000, '2026-05-05', 5);
+SELECT
+    name_driver,
+    email_driver
+FROM drivers;
 
--- UPDATE SEGURO
+-- ALIAS CON AS
 
-UPDATE drivers
-SET email_driver = 'nuevo_correo@gmail.com'
+SELECT
+    name_driver                  AS nombre_conductor,
+    license_driver               AS licencia,
+    is_active                    AS conductor_activo
+FROM drivers;
+
+-- COLUMNAS CALCULADAS
+
+SELECT
+    origin_trip                  AS origen,
+    destination_trip             AS destino,
+    price_trip * 2               AS precio_doble
+FROM trips;
+
+-- WHERE
+
+SELECT
+    name_driver,
+    phone_number
+FROM drivers
 WHERE id_driver = 1;
 
-UPDATE trips
-SET status_trip = 'completed'
-WHERE id_trip = 3;
-
--- UPDATE CONDICIONAL
-
-UPDATE drivers
-SET is_active = 0
-WHERE id_driver >= 13;
-
--- DELETE SEGURO
+-- WHERE CON DIFERENTE OPERADOR
 
 SELECT
-    id_trip,
     origin_trip,
     destination_trip,
-    status_trip
+    price_trip
 FROM trips
-WHERE id_trip = 5;
+WHERE price_trip > 20000;
 
-DELETE FROM trips
-WHERE id_trip = 5;
-
--- CONSULTAS
+-- ORDER BY DESC
 
 SELECT
-    id_driver,
+    origin_trip,
+    destination_trip,
+    price_trip
+FROM trips
+ORDER BY price_trip DESC;
+
+-- ORDER BY ASC
+
+SELECT
     name_driver,
-    phone_number,
     email_driver
 FROM drivers
-WHERE is_active = 1;
+ORDER BY name_driver ASC;
+
+-- TOP 3 VIAJES MÁS COSTOSOS
 
 SELECT
-    id_vehicle,
-    plate_vehicle,
-    model_vehicle
-FROM vehicles
-WHERE color_vehicle = 'Rojo';
-
-SELECT
-    id_trip,
     origin_trip,
     destination_trip,
-    status_trip
+    price_trip
 FROM trips
-WHERE status_trip = 'completed';
+ORDER BY price_trip DESC
+LIMIT 3;
+
+-- PAGINACIÓN
+
+-- Página 1
 
 SELECT
-    id_earning,
-    total_earning,
-    earning_date
-FROM earnings
-WHERE total_earning > 100000;
+    name_driver,
+    email_driver
+FROM drivers
+ORDER BY name_driver ASC
+LIMIT 2 OFFSET 0;
+
+-- Página 2
+
+SELECT
+    name_driver,
+    email_driver
+FROM drivers
+ORDER BY name_driver ASC
+LIMIT 2 OFFSET 2;
